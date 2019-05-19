@@ -17,7 +17,7 @@ public:
         column_index = 0;
         threshold =NULL;
         outcome = NULL;
-        outcome_proba = std::vector<double>();;
+        outcome_proba = std::vector< double>();;
 
         left_child = nullptr;
         right_child = nullptr;
@@ -28,18 +28,18 @@ public:
         delete  right_child;
     }
 
-    void train(DataFrame<double> X, std::vector<int> y, std::vector<int> unique_targets = std::vector<int>(), int max_features = NULL, int min_samples_split=2, int max_depth=1000, double min_gain=0.0001){
+    void train(DataFrame<double> X, std::vector<double> y, std::vector<double> unique_targets = std::vector<double>(), int max_features = NULL, int min_samples_split=2, int max_depth=10, double min_gain=0.0001){
         std::vector<double> best_split;
-        std::vector<int> left_y, right_y;
+        std::vector<double> left_y, right_y;
         DataFrame<double> left_X, right_X;
-        DataFrame<int> tmp_y;
-        std::vector<DataFrame<double>> tmp_X;
+        DataFrame<double> tmp_y;
+        std::vector<DataFrame< double>> tmp_X;
         int column;
-        double value, loc_gain = NULL;
+         double value, loc_gain = NULL;
         bool flag = false;
 
         if (unique_targets.size() == 0){
-            unique_targets = DataFrame<int>::unique(y);
+            unique_targets = DataFrame<double>::unique(y);
             std::sort(unique_targets.begin(),  unique_targets.end());
         }
 
@@ -87,7 +87,7 @@ public:
         }
     }
 
-    int predict_row(std::vector<double> row){
+    double predict_row(std::vector< double> row){
         if(left_child != nullptr && right_child != nullptr){
 
             if (row[column_index] < threshold){
@@ -113,8 +113,8 @@ public:
         return outcome_proba;
     }
 
-    std::vector<int> predict(DataFrame<double> X){
-        std::vector<int> y_pred;
+    std::vector<double> predict(DataFrame< double> X){
+        std::vector<double> y_pred;
 
         for (int i = 0; i < X.get_row(); ++i) {
             y_pred.push_back(predict_row(X[i]));
@@ -122,8 +122,8 @@ public:
         return y_pred;
     }
 
-    DataFrame<double> predict_proba(const DataFrame<double> &X) const{
-        DataFrame<double> pred;
+    DataFrame< double> predict_proba(const DataFrame< double> &X) const{
+        DataFrame< double> pred;
         for (int i = 0; i < X.get_row(); ++i) {
             pred.append(predict_proba_row(X[i]));
         }
@@ -132,17 +132,17 @@ public:
     }
 
 private:
-    std::vector<double> outcome_proba;
-    double gain, threshold;
+    std::vector< double> outcome_proba;
+     double gain, threshold;
     int size, column_index, outcome;
     DecisionTree *left_child, *right_child;
 
-    std::vector<double> find_splits(std::vector<double> X){
-        std::set<double> split_values;
-        std::vector<double> values;
-        std::vector<double> x_unique;
-        double average;
-        x_unique = DataFrame<double>::unique(X);
+    std::vector< double> find_splits(std::vector< double> X){
+        std::set< double> split_values;
+        std::vector< double> values;
+        std::vector< double> x_unique;
+         double average;
+        x_unique = DataFrame< double>::unique(X);
 
         for (int i = 1; i < x_unique.size(); ++i) {
             average = (x_unique[i - 1] + x_unique[i]) / 2.0;
@@ -156,13 +156,13 @@ private:
         return values;
     }
 
-    std::vector<double> find_best_split(const DataFrame<double> &X, const std::vector<int> &y, int max_features = NULL){
-        std::vector<int> subset, rand_vec;
+    std::vector< double> find_best_split(const DataFrame<double> &X, const std::vector<double> &y, int max_features = NULL){
+        std::vector<double> subset, rand_vec;
         std::vector<double> split_values, ans;
-        DataFrame<int> splits;
-        double gain;
+        DataFrame<double> splits;
+         double gain;
         int rand_col, a, b, max_col = NULL,  max, rand_i, min;
-        double max_col_double, max_gain = NULL, max_val = NULL;
+         double max_col_double, max_gain = NULL, max_val = NULL;
 
         srand(time(NULL));
         for (int i = 0; i < max_features; ++i) {
@@ -212,15 +212,15 @@ private:
         return ans;
     }
 
-    void calculate_leaf_value(std::vector<int> y, std::vector<int> unique_targets){
-        std::vector<int>::iterator max = std::max_element(y.begin(), y.end());
-        std::vector<int> count, uniques;
-        std::vector<double> counts_normed;
-        std::map<int, double> probs;
+    void calculate_leaf_value(std::vector<double> y, std::vector<double> unique_targets){
+        std::vector<double>::iterator max = std::max_element(y.begin(), y.end());
+        std::vector<double> count, uniques;
+        std::vector< double> counts_normed;
+        std::map<double,  double> probs;
         double sum, p;
-        int max2, number;
+        double max2, number;
 
-        uniques = DataFrame<int>::unique(y);
+        uniques = DataFrame<double>::unique(y);
         for (int i = 0; i <= *max; ++i) {
             count.push_back(0);
         }
@@ -246,7 +246,7 @@ private:
         }
 
         for (int i = 0; i < uniques.size(); ++i) {
-            probs.insert(std::pair<int, double>(uniques[i], counts_normed[i]));
+            probs.insert(std::pair<double,  double>(uniques[i], counts_normed[i]));
         }
 
         outcome_proba = std::vector<double>();

@@ -17,7 +17,7 @@ class RandomForestClassifier
 public:
     RandomForestClassifier();
 
-    RandomForestClassifier(int N_base_models, int Min_samples_split, int Max_depth, int N_features, double Min_gain);
+    RandomForestClassifier(int N_base_models, int Min_samples_split, int Max_depth, int N_features,  double Min_gain);
 
     ~RandomForestClassifier(){
         for (int i = 0; i < n_base_models; ++i) {
@@ -25,11 +25,11 @@ public:
         }
     }
 
-    void train(DataFrame<double> X, std::vector<int> y);
-    std::vector<int> predict(DataFrame<double> X);
-    
+    void train(DataFrame<double> X, std::vector<double> y, int Max_depth = 1000, int n_base_models = 100, int n_features = NULL);
+    std::vector<double> predict(DataFrame<double> X);
+
 private:
-    DataFrame<double> create_sample(DataFrame<double> X) const;
+    std::vector<DataFrame<double>> create_sample(const DataFrame<double> &X, const std::vector<double> &y) const;
 
     int max_features, min_samples_split, max_depth, n_features, n_base_models;
     double min_gain;

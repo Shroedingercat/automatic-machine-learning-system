@@ -15,6 +15,10 @@ public:
         data = std::vector<std::vector<data_type>>();
     }
 
+    DataFrame(const std::vector<std::vector<data_type>> & Data ){
+        data = Data;
+    }
+
     std::vector<int> get_size() const{return {data.size(), data[0].size()};}
     int get_column() const{return data[0].size();}
     int get_row() const{return data.size();}
@@ -131,6 +135,82 @@ public:
         data = new_matrix;
     }
 
+    DataFrame operator-(data_type number) const
+    {
+        std::vector<std::vector<data_type>> new_data = data;
+        for(int i = 0; i < get_row(); i++)
+        {
+            for(int j = 0; j < get_column(); j++)
+            {
+                new_data[i][j] -= number;
+            }
+        }
+        return DataFrame(new_data);
+    }
+
+    DataFrame operator*(data_type number) const
+    {
+        std::vector<std::vector<data_type>> new_data = data;
+        for(int i = 0; i < get_row(); i++)
+        {
+            for(int j = 0; j < get_column(); j++)
+            {
+                new_data[i][j] *= number;
+            }
+        }
+        return DataFrame(new_data);
+    }
+
+    DataFrame operator-(DataFrame other)
+    {
+        std::vector<std::vector<data_type>> new_data = data;
+        if(other.get_size() == get_size())
+        {
+            for(int i = 0; i < get_row(); i++)
+            {
+                for(int j = 0; j < get_column(); j++)
+                {
+                    new_data[i][j] -= other[i][j];
+                }
+            }
+        }
+        return DataFrame(new_data);
+    }
+
+    //евклидово растояние
+    static data_type dist(const std::vector<data_type> & vec1, const std::vector<data_type> &vec2)
+    {
+        DataFrame matr1 = DataFrame({vec1}), matr2 = DataFrame({vec2});
+        matr1 = matr1 - matr2;
+        data_type ans = 0;
+        for (int i = 0;i < matr1.get_row(); i++)
+        {
+            for(int j = 0;j < matr1.get_column(); j++)
+            {
+                ans += pow(matr1[i][j], 2);
+            }
+        }
+
+        return sqrt(ans);
+
+    }
+
+    //перегрузка операторов: +, -, *, /
+    DataFrame operator+(const DataFrame& other) const
+    {
+        std::vector<std::vector<data_type>> new_data = data;
+        if(other.get_size() == get_size())
+        {
+            for(int i = 0; i < get_row(); i++)
+            {
+                for(int j = 0; j < get_column(); j++)
+                {
+                    new_data[i][j] += other[i][j];
+                }
+            }
+        }
+        return DataFrame(new_data);
+    }
 
 private:
     //вектор данных
